@@ -4,22 +4,23 @@
     "type": "split",
     "children": [
       {
-        "id": "9305705a3be6cc18",
+        "id": "f12dd92ba37c08ca",
         "type": "tabs",
         "children": [
           {
-            "id": "8509c92d1c196555",
+            "id": "015d970e27d22ce9",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Memory Errors.md",
+                "file": "Task Lists.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ]
+        ],
+        "stacked": true
       }
     ],
     "direction": "vertical"
@@ -85,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Memory Errors.md",
+                "file": "Task Lists.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Memory Errors.md",
+                "file": "Task Lists.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,15 +126,28 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Memory Errors.md"
+                "file": "Task Lists.md"
+              }
+            }
+          },
+          {
+            "id": "8509c92d1c196555",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Shellcode Injection.md",
+                "mode": "source",
+                "source": false
               }
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
-    "width": 300,
+    "width": 243.5,
     "collapsed": true
   },
   "left-ribbon": {
@@ -145,20 +159,21 @@
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
       "obsidian-textgenerator-plugin:Generate Text!": false,
-      "obsidian-textgenerator-plugin:Text Generator: Templates Packages Manager": false
+      "obsidian-textgenerator-plugin:Text Generator: Templates Packages Manager": false,
+      "zk-prefixer:Create new unique note": false
     }
   },
-  "active": "8509c92d1c196555",
+  "active": "015d970e27d22ce9",
   "lastOpenFiles": [
-    "Race Condtion.md",
-    "README.md",
     "Shellcode Injection.md",
+    "Vulnerability Research and Exploit Development.md",
+    "Dynamic Allocators.md",
+    "Exploitation Scenarios.md",
+    "Kernel Security.md",
+    "Race Condtion.md",
     "Memory Errors.md",
-    "Home.md",
-    "images/Pasted image 20221221221845.png",
-    "images/Pasted image 20221221221949.png",
-    "images/Pasted image 20221221221928.png",
-    "[.md",
-    "Memor Errors.md"
+    "Reverse Engineering.md",
+    "Sandboxing.md",
+    "Assembly.md"
   ]
 }

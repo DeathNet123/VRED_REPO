@@ -209,3 +209,7 @@ For example, if a page is 4,096 bytes in size, its possible addresses would be 0
 If an attacker wants to redirect a pointer to another location on the same page, they can overwrite the two least significant bytes of the pointer. With little endian byte ordering, these are the first two bytes of the pointer. By overwriting these two bytes, the attacker can redirect the pointer to any address within the same page, requiring only a brute-force search of 16 possible values (one nibble) to find a valid address.
 
 It is important to note that this method of bypassing ASLR is only effective if the attacker can control the two least significant bytes of a pointer. In other cases, a more extensive brute-force search may be required to find a valid address. Additionally, this method may not be effective if the target program uses other security measures, such as stack canaries or non-executable stacks, to defend against memory corruption attacks.
+
+>[!Note]
+>The Brute-Force technique works in netwrok based application and it can work in android since all the processes in android are spawned throug the single main process
+

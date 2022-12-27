@@ -1,0 +1,10 @@
+- [ ] Process in Linux => Arslan Ahmed
+- [ ] x86_64 Assembly => Tehreem Iqbal
+- [ ] ShellCoding => Ali Raza
+- [ ] Sandboxing => Tehreem Iqbal
+- [ ] Revere Engineerig => Faran Abdullah
+- [x] Memory Errors => Arslan Ahmed
+- [ ] Race Condition => Faran Abdullah
+- [ ] Kernel Security  => Arslan Ahmed
+- [ ] Exploitation Scenarios => Ali Raza
+- [ ] Dynamic Allocator Misuse => Arslan Ahmed 
