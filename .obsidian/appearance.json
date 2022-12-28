@@ -1,4 +1,7 @@
 {
-  "accentColor": "",
-  "cssTheme": "Obsidianite"
+  "accentColor": "#1a0b4c",
+  "cssTheme": "Obsidianite",
+  "theme": "system",
+  "translucency": true,
+  "nativeMenus": false
 }

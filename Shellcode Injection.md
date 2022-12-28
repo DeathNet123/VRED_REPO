@@ -4,6 +4,7 @@ But it lead to many security issues. Since data and code are stored in same memo
 
 ### How does it get Injected?
 Usually, programmers make mistakes and we use those mistakes to inject our shellcode. There are many ways to inject shellcode. In this post, we'll learn how can we write carefully crafted input data that can execute directly and can gain access to different system resource. For example:
+
 ```c
 void bye1() { puts("Goodbye!"); }
 void bye2() { puts("Farewell!"); }
@@ -21,6 +22,7 @@ int main(int argc, char **argv)
 	else hello(name, bye2);
 }
 ```
+
 Compile with:  `gcc -z execstack -o hello hello.c`
 
 In the above code, when the value of `rand()` is even, the `hello()` function will be called with the arguments `name` and `bye2`. But when the value of `rand()` is odd, the `hello()` function will be called with the arguments `bye1` and `name`, which is not correct way to call the hello function. It takes the second parameter as a function pointer, but we are passing a string. This is a classic example of shellcode injection. We can simply use the gets() function to inject our shellcode in the form of crafted input data.

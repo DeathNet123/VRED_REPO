@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "f12dd92ba37c08ca",
+        "id": "f3b8de1a148b9dee",
         "type": "tabs",
         "children": [
           {
-            "id": "015d970e27d22ce9",
+            "id": "e16cf05a5a3ad3f1",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Task Lists.md",
+                "file": "Kernel Security.md",
                 "mode": "source",
                 "source": false
               }
@@ -70,7 +70,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200,
+    "collapsed": true
   },
   "right": {
     "id": "6a69ca6ea302783e",
@@ -86,7 +87,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Task Lists.md",
+                "file": "Kernel Security.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +104,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Task Lists.md",
+                "file": "Kernel Security.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,17 +127,17 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Task Lists.md"
+                "file": "Kernel Security.md"
               }
             }
           },
           {
-            "id": "8509c92d1c196555",
+            "id": "015d970e27d22ce9",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Shellcode Injection.md",
+                "file": "Task Lists.md",
                 "mode": "source",
                 "source": false
               }
@@ -147,7 +148,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 243.5,
+    "width": 200,
     "collapsed": true
   },
   "left-ribbon": {
@@ -163,17 +164,17 @@
       "zk-prefixer:Create new unique note": false
     }
   },
-  "active": "015d970e27d22ce9",
+  "active": "d834445fa21557ae",
   "lastOpenFiles": [
+    "images/Pasted image 20221228193811.png",
+    "Kernel Security.md",
+    "Untitled.canvas",
     "Shellcode Injection.md",
+    "Task Lists.md",
     "Vulnerability Research and Exploit Development.md",
     "Dynamic Allocators.md",
     "Exploitation Scenarios.md",
-    "Kernel Security.md",
     "Race Condtion.md",
-    "Memory Errors.md",
-    "Reverse Engineering.md",
-    "Sandboxing.md",
-    "Assembly.md"
+    "Memory Errors.md"
   ]
 }
