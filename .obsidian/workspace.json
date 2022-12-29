@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Kernel Security.md",
+                "file": "Shellcode Injection.md",
                 "mode": "source",
                 "source": false
               }
@@ -70,8 +70,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200,
-    "collapsed": true
+    "width": 200
   },
   "right": {
     "id": "6a69ca6ea302783e",
@@ -87,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Kernel Security.md",
+                "file": "Shellcode Injection.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Kernel Security.md",
+                "file": "Shellcode Injection.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -127,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Kernel Security.md"
+                "file": "Shellcode Injection.md"
               }
             }
           },
@@ -159,22 +158,22 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
+      "zk-prefixer:Create new unique note": false,
       "obsidian-textgenerator-plugin:Generate Text!": false,
-      "obsidian-textgenerator-plugin:Text Generator: Templates Packages Manager": false,
-      "zk-prefixer:Create new unique note": false
+      "obsidian-textgenerator-plugin:Text Generator: Templates Packages Manager": false
     }
   },
   "active": "e16cf05a5a3ad3f1",
   "lastOpenFiles": [
-    "images/Pasted image 20221228193811.png",
-    "Kernel Security.md",
-    "Untitled.canvas",
-    "Shellcode Injection.md",
+    "Assembly.md",
     "Task Lists.md",
-    "Vulnerability Research and Exploit Development.md",
-    "Dynamic Allocators.md",
+    "README.md",
+    "Memory Errors.md",
+    "Kernel Security.md",
     "Exploitation Scenarios.md",
-    "Race Condtion.md",
-    "Memory Errors.md"
+    "Dynamic Allocators.md",
+    "images/Pasted image 20221228193811.png",
+    "Untitled.canvas",
+    "Shellcode Injection.md"
   ]
 }
