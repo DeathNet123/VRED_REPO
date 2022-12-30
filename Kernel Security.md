@@ -191,7 +191,7 @@ From user space, a program can use the read() and write() system calls to access
 fd = open("/dev/arslan_mod", 0) read(fd, buffer, 128);
 ```
 
-This code would open the file "/dev/pwn-college" in read-only mode, and then use the read() system call to read up to 128 bytes of data into the "buffer" memory location.
+This code would open the file **"/dev/pufcit"** in read-only mode, and then use the read() system call to read up to 128 bytes of data into the "buffer" memory location.
 
 This interaction mode is useful for modules that deal with streams of data, such as audio or video data, as it allows the module to handle the data in a continuous stream rather than in discrete blocks. It is also useful for modules that need to support non-blocking I/O, as the read() and write() functions can return a partial count of the requested data if the operation cannot be completed immediately
 
@@ -207,7 +207,7 @@ static long device_ioctl(struct file *filp, unsigned int ioctl_num, unsigned lon
 ```c
 /*From user space:*/
 
-int fd = open("/dev/pwn-college", 0);
+int fd = open("/dev/pufcit", 0);
 
 ioctl(fd, COMMAND_CODE, &custom_data_structure);
 ```
@@ -215,4 +215,95 @@ ioctl(fd, COMMAND_CODE, &custom_data_structure);
 Useful for setting and querying non-stream data (i.e., webcam  resolution settings as opposed to webcam video stream).
 
 [Follow this link to learn how to compile the kernel modules](https://tldp.org/LDP/lkmpg/2.6/html/index.html)
+
+### Memory Corruption in Kernel
+
+Kernel memory is a special type of memory that is reserved for the kernel's use. It is typically located in a separate address space from user-space memory, which is used by user programs and processes. This separation is important for security and stability, as it prevents user programs from directly accessing or modifying kernel memory, which could potentially lead to corruption or other problems.
+
+The `copy_to_user` and `copy_from_user` functions are used to copy data between kernel-space and user-space memory. These functions are typically used when a kernel module or driver needs to access data that is stored in user-space memory, or when a user program needs to access data that is stored in kernel-space memory.
+
+When using these functions, it is important to be careful and ensure that the data being accessed is valid and correctly formatted. If the data is corrupted or otherwise invalid, it could cause problems such as system crashes, bricked systems, or even privilege escalation attacks. Therefore, it is important to carefully handle all user data and use these functions to ensure the integrity of the kernel memory. Kernel code is just code! Memory corruptions, allocator misuse, etc, all happen in the kernel! What can we do once we have exploited the Vulnerability?
+
+### Kernel Race Conditions
+
+One potential issue with kernel modules is that they can be prone to race conditions, which can occur when multiple threads or processes try to access shared resources simultaneously. This can lead to problems such as resource contention, data corruption, or even system crashes.
+
+For example, if two devices open the file `/dev/pufcit` simultaneously, there is a risk that the resources associated with this file could be swapped or disappear mid-execution, leading to unexpected behavior or errors. Similarly, if the kernel module `make_root.ko` is removed while the file `/proc/pufcit` is open, it could cause problems such as system crashes or data corruption.
+
+To prevent these types of issues, it is important to carefully design and implement kernel modules to ensure that they are thread-safe and do not suffer from race conditions. This may involve using synchronization mechanisms such as mutexes or semaphores to ensure that shared resources are accessed in a controlled and consistent manner.
+
+### Privilege Escalation 
+
+Kernel keeps track of various information about each process, including its privilege level, memory usage, and other metadata.
+
+One way that the kernel stores this information is by using a data structure called `struct task_struct`. This structure is defined in the kernel's source code and is used to represent a process in the kernel. It contains a wide range of fields that store information about the process, such as its process ID, priority level, memory usage, and other metadata.
+
+Another data structure that is often used to store information about process privileges is `struct cred`, which stands for "credentials". This structure is used to store information about the user and group IDs of a process, as well as other security-related information such as the capabilities of the process.
+
+Together, `struct task_struct` and `struct cred` are used by the kernel to track the privileges and other data of every running process. This information is used by the kernel to manage and schedule processes effectively, and to ensure that each process is only able to access the resources and perform the actions that it is allowed to.
+
+>[!Note]
+>**struct cred** is member of struct **task_struct** 
+
+```c
+struct task_struct {
+    struct thread_info      thread_info;
+    /* -1 unrunnable, 0 runnable, >0 stopped: */
+    volatile long           state;
+    void                    *stack;
+    atomic_t                usage;
+  // ...
+    int                     prio;
+    int                     static_prio;
+    int                     normal_prio;
+    unsigned int            rt_priority;
+    struct sched_info       sched_info;
+    struct list_head        tasks;
+    pid_t                   pid;
+    pid_t                   tgid;
+    /* Process credentials: */
+    /* Objective and real subjective task credentials (COW): */
+    const struct cred __rcu  *real_cred;
+    /* Effective (overridable) subjective task credentials (COW): */
+    const struct cred __rcu  *cred;
+  // ...
+
+};
+```
+
+```c
+
+struct cred {
+    atomic_t    usage;
+    kuid_t      uid;      /* real UID of the task */
+    kgid_t      gid;      /* real GID of the task */
+    kuid_t      suid;      /* saved UID of the task */
+    kgid_t      sgid;      /* saved GID of the task */
+    kuid_t      euid;      /* effective UID of the task */
+    kgid_t      egid;      /* effective GID of the task */
+    kuid_t      fsuid;      /* UID for VFS ops */
+    kgid_t      fsgid;      /* GID for VFS ops */
+    unsigned    securebits;    /* SUID-less security management */
+    kernel_cap_t    cap_inheritable; /* caps our children can inherit */
+    kernel_cap_t    cap_permitted;    /* caps we're permitted */
+    kernel_cap_t    cap_effective;    /* caps we can actually use */
+    kernel_cap_t    cap_bset;    /* capability bounding set */
+    kernel_cap_t    cap_ambient;    /* Ambient capability set */
+  // ...
+};
+```
+
+ The `commit_creds` structure is typically considered to be immutable, which means that it should not be modified in place. Instead, when the credentials of a process need to be changed, the kernel provides a pair of functions called `commit_creds` and `prepare_kernel_cred` that can be used to replace the existing credentials with new ones.
+
+The `commit_creds` function is used to commit a new set of credentials to a process. It takes a pointer to a `struct cred` structure as an argument, and updates the credentials of the current process to match the ones specified in the structure.
+
+The `prepare_kernel_cred` function is used to create a new set of credentials that can be used to update the credentials of a process. It takes a pointer to a `struct task_struct` structure as an argument, and returns a pointer to a new `struct cred` structure that contains the new credentials. If the `reference_task_struct` argument is set to `NULL`, the function will create a new `struct cred` structure with root access and full privileges.
+
+These functions are typically used when a kernel module or driver needs to change the privileges of a process, or when a user program needs to escalate its privileges in order to perform certain actions. 
+Inshort, when we have control all we have to run is `commit_cred(prepare_kernel_cred(0));
+
+>[!Note]
+>We might face few complications How do we know where commit_creds and prepare_kernel_cred are in memory?
+>
+
 

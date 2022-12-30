@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Shellcode Injection.md",
+                "file": "Kernel Security.md",
                 "mode": "source",
                 "source": false
               }
@@ -86,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Shellcode Injection.md",
+                "file": "Kernel Security.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Shellcode Injection.md",
+                "file": "Kernel Security.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Shellcode Injection.md"
+                "file": "Kernel Security.md"
               }
             }
           },
@@ -165,6 +165,7 @@
   },
   "active": "e16cf05a5a3ad3f1",
   "lastOpenFiles": [
+    "Shellcode Injection.md",
     "Assembly.md",
     "Task Lists.md",
     "README.md",
@@ -173,7 +174,6 @@
     "Exploitation Scenarios.md",
     "Dynamic Allocators.md",
     "images/Pasted image 20221228193811.png",
-    "Untitled.canvas",
-    "Shellcode Injection.md"
+    "Untitled.canvas"
   ]
 }
