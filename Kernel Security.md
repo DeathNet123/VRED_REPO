@@ -306,4 +306,28 @@ Inshort, when we have control all we have to run is `commit_cred(prepare_kernel_
 >We might face few complications How do we know where commit_creds and prepare_kernel_cred are in memory?
 >
 
+### Escaping Seccomp
+
+We talked about `struct cred` the `struct task_struct` has one more amazing struct known as `struct thread_info`
+
+```c
+struct thread_info {  
+    unsigned long flags;  /* low level flags */    u32 status;  /* thread synchronous flags */  
+};
+```
+
+flags is a bit field that, among many other things, holds a bit named TIF_SECCOMP. Guess what it does? 
+
+TIF_SECCOMP is a flag in the `flags` bit field of the `thread_info` structure in the Linux kernel. It indicates whether a thread (a flow of execution in a program) has enabled the secure computing mode (SECCOMP) filter. if It is set to 1 when SECCOMP is enabled for the thread, and 0 when it is disabled. This allows the kernel to efficiently check whether a thread is using SECCOMP without having to inspect the SECCOMP filter itself. So how does it get's checked ? they are checked on the syscall entry.
+
+To escape seccomp, we just need to do (in KERNEL space): `current_task_struct->thread_info.flags &= ~(1 << TIF_SECCOMP)` How do we get the current_task_struct? We're in luck! The kernel points the segment register gs to the current task struct. In kernel development, there is a shorthand macro for this: current The plan: Access current->thread_info.flags via the gs register. Clear the TIF_SECCOMP flag. Get the flag!!! 
+
+>[!Note]
+>Caveat: our children will still be seccomped (that's stored elsewhere).
+
+
+
+
+
+
 
