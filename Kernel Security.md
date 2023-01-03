@@ -321,13 +321,66 @@ flags is a bit field that, among many other things, holds a bit named TIF_SECCOM
 TIF_SECCOMP is a flag in the `flags` bit field of the `thread_info` structure in the Linux kernel. It indicates whether a thread (a flow of execution in a program) has enabled the secure computing mode (SECCOMP) filter. if It is set to 1 when SECCOMP is enabled for the thread, and 0 when it is disabled. This allows the kernel to efficiently check whether a thread is using SECCOMP without having to inspect the SECCOMP filter itself. So how does it get's checked ? they are checked on the syscall entry.
 
 To escape seccomp, we just need to do (in KERNEL space): `current_task_struct->thread_info.flags &= ~(1 << TIF_SECCOMP)` How do we get the current_task_struct? We're in luck! The kernel points the segment register gs to the current task struct. In kernel development, there is a shorthand macro for this: current The plan: Access current->thread_info.flags via the gs register. Clear the TIF_SECCOMP flag. Get the flag!!! 
+**Caveat: our children will still be seccomped (that's stored elsewhere)**
 
->[!Note]
->Caveat: our children will still be seccomped (that's stored elsewhere).
+>[!info]
+>Since the `task_struct` is very important data structure and is required most of the time the gs segment register is always pointing towards it.
 
+### Memory Management By Kernel
 
+In a Linux system, each process has a virtual memory space that is dedicated to that process. This virtual memory space is created by the kernel when the process is started, and it is used by the process to store its code, data, and other information.
 
+The virtual memory space of a process contains several different regions, including:
 
+-   The binary: This is the actual program code that is being executed by the process. It is stored in the virtual memory space as a series of instructions that can be executed by the processor.
+   
+-   The libraries: These are code libraries that are used by the program to perform various tasks. They are stored in the virtual memory space and can be accessed by the program as needed.
+   
+-   The heap: The heap is a region of memory that is used to store dynamically allocated memory. When a program needs to allocate memory at runtime (for example, using the malloc() function in C), it can request memory from the heap.
+   
+-   The stack: The stack is a region of memory that is used to store function local variables and other data that is needed during the execution of a function. When a function is called, a new stack frame is created on the stack to hold the local variables for that function.
 
+-   Memory specifically mapped by the program: A program can request that specific regions of memory be mapped into its virtual memory space for various reasons. For example, a program might map in a file from the filesystem, or it might map in a shared memory region that is used for inter-process communication.
 
+-   Helper regions: There are also several other regions of memory that are used for various purposes by the operating system and the program. These can include regions for storing thread-specific data, signal handlers, and other miscellaneous data.
+
+-   Kernel code: In addition to the virtual memory space of a process, there is also an "upper half" of memory (above 0x8000000000000000 on 64-bit architectures) that is reserved for the kernel and is inaccessible to processes. This region of memory contains the code and data that is needed by the operating system to manage the system and provide services to processes. 
+
+We can see the virtual memory space of a process by looking at the /proc/self/maps file. This file contains a list of the different memory regions that are mapped into the virtual memory space of the process, along with information about the permissions, offsets, and other attributes of each region.
+
+### Virtual Mapping
+
+Physical memory, also known as RAM (random access memory), is the main type of memory that is used by a computer to store data that is being actively used or processed. When a program is running, it is loaded into physical memory so that it can be accessed quickly by the processor.
+
+One of the challenges of managing physical memory is that there is a limited amount of it available on a typical computer, and multiple programs may need to be loaded into memory at the same time. To address this, most operating systems use a technique called "virtual memory" to allow each program to have its own virtual address space, even if there is not enough physical memory to give each program its own dedicated block of RAM.
+
+In this system, each program is given a virtual address space that is much larger than the amount of physical memory available on the system. The operating system then uses a memory management unit (MMU) to map the virtual addresses used by the program to physical addresses in RAM, as needed. This allows multiple programs to share the available physical memory, and it also allows each program to be isolated from the others, so that they do not interfere with each other's operation.
+
+### How to Map Virtual Memory Over Physical Memory
+
+#### Strawman Solution
+
+In this virtual memory system, each process is typically given a fixed-size virtual address space, which is the range of virtual addresses that the process is allowed to use. This address space is mapped on physical memory which was of  4KB in size. 
+
+One advantage of this system is that it is easy for the operating system to track the mappings between virtual and physical memory, because each page of virtual memory is mapped to a corresponding page of physical memory. This makes it easy for the operating system to manage the memory usage of each process and to ensure that the correct data is being accessed by the processor.
+
+But what if process needs more than 4KB memory ?
+
+![[Pasted image 20230102035952.png]]
+
+In a virtual memory system, the physical position of contiguous virtual pages (i.e., a group of consecutive pages in the virtual address space of a process) can be non-contiguous in physical memory. This means that the physical pages that are used to store the virtual pages may not be located next to each other in RAM.
+
+To manage this, the operating system typically keeps track of the physical base address of each page of virtual memory. This allows it to map the virtual addresses used by the process to the correct physical addresses in RAM.
+
+![[Pasted image 20230102040245.png]]
+
+So, how exactly this physical base address for each page can be tracked ? In order to address this sometime way back in hisotry someone came up with idea of the Page Table.
+
+#### Page Tables
+
+A page table is a data structure that is used to store the mappings between virtual and physical memory. Each page table entry (PTE) in the page table corresponds to a page of virtual memory, and it stores the physical address of the page in RAM.
+
+Traditionally, page tables were organized as an array of entries, with each entry containing the mapping for a single page of virtual memory. The size of the page table and the number of entries it contained were determined by the size of the virtual address space and the size of the pages used by the system. For example, if the virtual address space was 2MB and the page size was 4KB, the page table would contain 512 entries, each mapping a 4KB page of virtual memory to a corresponding page of physical memory.
+
+However, this system has some limitations when it comes to managing non-contiguous virtual memory and very large virtual address spaces. For example, if the virtual address space of a process is larger than 2MB, the page table may not be able to hold enough entries to map all of the virtual pages. Similarly, if the virtual memory is non-contiguous (i.e., if the pages are not located next to each other in the virtual address space), it may be difficult to represent this using a simple array of page table entries.
 
