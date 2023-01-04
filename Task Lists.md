@@ -5,6 +5,6 @@
 - [ ] Revere Engineerig => Faran Abdullah
 - [x] Memory Errors => Arslan Ahmed
 - [ ] Race Condition => Faran Abdullah
-- [ ] Kernel Security  => Arslan Ahmed
+- [x] Kernel Security  => Arslan Ahmed
 - [ ] Exploitation Scenarios => Ali Raza
 - [ ] Dynamic Allocator Misuse => Arslan Ahmed 

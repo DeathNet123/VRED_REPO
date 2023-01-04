@@ -13,8 +13,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Kernel Security.md",
-                "mode": "source",
+                "file": "Task Lists.md",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -86,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Kernel Security.md",
+                "file": "Task Lists.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Kernel Security.md",
+                "file": "Task Lists.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Kernel Security.md"
+                "file": "Task Lists.md"
               }
             }
           },
@@ -165,11 +165,11 @@
   },
   "active": "e16cf05a5a3ad3f1",
   "lastOpenFiles": [
-    "Assembly.md",
     "Kernel Security.md",
+    "Task Lists.md",
+    "Assembly.md",
     "Dynamic Allocators.md",
     "Exploitation Scenarios.md",
-    "Task Lists.md",
     "Shellcode Injection.md",
     "README.md",
     "Memory Errors.md",

