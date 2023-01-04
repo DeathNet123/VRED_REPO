@@ -382,5 +382,85 @@ A page table is a data structure that is used to store the mappings between virt
 
 Traditionally, page tables were organized as an array of entries, with each entry containing the mapping for a single page of virtual memory. The size of the page table and the number of entries it contained were determined by the size of the virtual address space and the size of the pages used by the system. For example, if the virtual address space was 2MB and the page size was 4KB, the page table would contain 512 entries, each mapping a 4KB page of virtual memory to a corresponding page of physical memory.
 
-However, this system has some limitations when it comes to managing non-contiguous virtual memory and very large virtual address spaces. For example, if the virtual address space of a process is larger than 2MB, the page table may not be able to hold enough entries to map all of the virtual pages. Similarly, if the virtual memory is non-contiguous (i.e., if the pages are not located next to each other in the virtual address space), it may be difficult to represent this using a simple array of page table entries.
+![[Pasted image 20230103184701.png]]
+
+However, this system has some limitations when it comes to managing non-contiguous virtual memory and very large virtual address spaces. For example, if the virtual address space of a process is larger than 2MB, the page table may not be able to hold enough entries to map all of the virtual pages. Similarly, if the virtual memory is non-contiguous (i.e., if the pages are not located next to each other in the virtual address space), it may be difficult to represent this using a simple array of page table entries. The Solution to these problems were solved by introducing the mullti-level paging system
+
+### Page Directory
+
+In a virtual memory system, a multi-level paging structure is a data structure that is used to store the mappings between virtual and physical memory. It is called a "multi-level" paging structure because it consists of multiple levels of data structures, rather than a single flat array.
+
+The top level of the paging structure is called the page directory, and it contains a set of page directory entries (PDEs). Each PDE in the page directory maps to a page table, which is a data structure that contains a set of page table entries (PTEs). Each PTE in a page table maps to a page of physical memory, which is typically 4KB in size.
+
+Using this multi-level paging structure, it is possible to map a large virtual address space (up to 1GB) to physical memory. For example, if each page table contains 512 entries and each page is 4KB in size, the paging structure can map up to 2MB of virtual memory (512 entries * 4KB per entry = 2MB). If the page directory contains 512 PDEs, and each PDE refers to a page table that maps 2MB of virtual memory, the page directory can map a total of 1GB of virtual memory (512 entries * 2MB per entry = 1GB).
+
+![[Pasted image 20230103185140.png]]
+
+There is some overhead associated with using a multi-level paging structure, as each level of the paging structure consumes some memory to store the data structures and the mappings. For example, the page directory itself consumes 0x1000 bytes of memory, and each page table consumes 0x1000 bytes of memory for each 2MB of virtual memory that it maps.
+
+To reduce this overhead, it is possible to set a special flag in a PDE to indicate that it should refer directly to a 2MB region of physical memory, rather than to a page table. This can reduce the overhead of the paging structure. But what if we need more than 1GB of RAM infact we all do way more than 1GB of RAM. 
+
+### Page Directory Page Table
+
+directory page table (PDPT) to map an even larger virtual address space to physical memory. A PDPT is similar to a page directory, but it contains page directory pointers (PDPs) instead of PDEs. Each PDP in the PDPT points to a page directory, which in turn contains PDEs that map to page tables.
+
+Using this structure, it is possible to map a virtual address space of up to 512GB of memory. For example, if each page directory contains 512 PDEs, and each PDE maps to a page table that maps 2MB of virtual memory, the PDPT can map a total of 512GB of virtual memory (512 PDPs * 512 PDEs * 2MB per PDE = 512GB).
+
+There is some overhead associated with using a PDPT, as it consumes 0x1000 bytes of memory to store the data structure and the pointers to the page directories. In addition, each page directory consumes 0x1000 bytes of memory to store the data structure and the PDEs.
+
+![[Pasted image 20230103185607.png]]
+
+To reduce this overhead, it is possible to set a special flag in a PDP to indicate that it should refer directly to a 1GB region of physical memory, rather than to a page directory. This can reduce the overhead of the paging structure, but it also limits the ability of the operating system to fine-tune the mappings between virtual and physical memory. But what if we need more than 512 GB ?
+
+### PML4
+
+In modern virtual memory systems, it is possible to use four levels of paging to map a very large virtual address space to physical memory. The top level of the paging structure is called the page map level 4 (PML4), and it contains page directory page table pointers (PDPTPs). Each PDPTP in the PML4 points to a page directory page table (PDPT), which in turn contains page directory pointers (PDPs) that point to page directories. Each page directory contains page directory entries (PDEs) that map to page tables, and each page table contains page table entries (PTEs) that map to pages of physical memory.
+
+![[Pasted image 20230103202107.png]]
+
+Using this four-level paging structure, it is possible to map a virtual address space of up to 256TB of memory. For example, if each PDPT contains 512 PDPs, and each PDP maps to a page directory that contains 512 PDEs, which in turn map to page tables that map 2MB of virtual memory each, the PML4 can map a total of 256TB of virtual memory (512 PML4 entries * 512 PDPT entries * 512 PDP entries * 512 PDE entries * 2MB per PDE = 256TB).
+
+This four-level paging structure allows the operating system to map very large virtual address spaces to physical memory, and it provides a high degree of flexibility for managing the memory usage of each process. However, it also requires a significant amount of overhead to manage the data structures and the mappings between virtual and physical memory.
+
+### Virtual to Physical Conversion
+
+The number 0x7fff47d4c123 is a hexadecimal representation of a memory address that is 48 bits long. When written in binary, this address can be split into six fields, each 8 bits long:
+
+0111 1111 1111 1111 0100 0111 1101 0100 1100 0001 0010 0011 
+
+A B C D E F
+
+![[Pasted image 20230103205302.png]]
+
+In a virtual memory system with a four-level paging structure, each of these fields corresponds to a different level of the paging structure. The fields are used to index into the paging data structures to determine the physical memory address that is mapped to the virtual memory address.
+
+For example, the instruction `mov rax, [rbx]` might be translated into the following form:
+
+`rax = *(long *)(PML4[A][B][C][D])[E]`
+
+This instruction accesses the physical memory address that is mapped to the virtual memory address stored in the register RBX. To do this, it uses the values of the fields A, B, C, D, and E to index into the PML4, PDPT, PDP, PD, and PT data structures, respectively. The resulting value is then dereferenced and stored in the register RAX.
+
+In this way, the four-level paging structure is used to translate the virtual memory address stored in RBX into a physical memory address, which is then accessed by the instruction. This allows the operating system to manage the memory usage of each process and to provide isolation and protection between different processes.
+
+### Process Isolation
+
+In a virtual memory system with a four-level paging structure, each process has its own page map level 4 (PML4) data structure to manage its virtual memory. The PML4 is used to store the mappings between the virtual and physical memory addresses used by the process.
+
+To access the PML4 of a particular process, the operating system can use the control register CR3. The CR3 register holds the physical address of the PML4 for the current process. The operating system can use the instruction "mov cr3, 0xaabbccdd" to load the physical address of the PML4 into the CR3 register, which allows it to access the PML4 and manage the virtual memory of the process.
+
+It is important to note that the CR3 register and the other control registers are only accessible in ring 0, which is the most privileged level of the operating system. This means that only the operating system and certain trusted programs are allowed to access these registers and modify their contents.
+
+Other control registers exist that are used to set various options and control the behavior of the processor. These registers can be used to enable or disable certain features, set the operating mode of the processor (e.g., 32-bit or 64-bit mode), and perform other tasks. If you are interested in learning more about the control registers and their functions, you can refer to the link provided in the original text for more information.
+
+### Virtual Machine Isolation
+
+In a virtualization system, multiple virtual machines (VMs) may run concurrently on a single physical host machine. Each VM has its own operating system and applications, which may expect to have full access to the physical memory of the host machine. However, it is important to isolate the VMs from each other and prevent them from accessing each other's memory or interfere with the operation of the other VMs.
+
+One way to achieve this isolation is through the use of an extended page table (EPT). An EPT is a data structure that is similar to a page table, but it is used to translate the "physical" memory addresses used by the VMs into the actual physical memory addresses of the host machine.
+
+The EPT consists of multiple levels of data structures, similar to a four-level paging structure. The top level of the EPT is the EPT PML4, which contains pointers to the EPT PDPT data structures. The EPT PDPT contains pointers to the EPT PD data structures, which in turn contain pointers to the EPT PT data structures. Each EPT PT contains entries that map the "physical" memory addresses used by the VMs to the actual physical memory addresses of the host machine.
+
+In this way, the EPT acts as an additional layer of address translation, allowing the VMs to access "physical" memory as if they had full access to the host machine's physical memory. However, in reality, each "physical" memory access is translated through the EPT, which ensures that the VMs are isolated from each other and that they do not interfere with the operation of the other VMs.
+
+
 
