@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "Task Lists.md",
-                "mode": "preview",
+                "mode": "source",
                 "source": false
               }
             }
@@ -165,12 +165,12 @@
   },
   "active": "e16cf05a5a3ad3f1",
   "lastOpenFiles": [
-    "Kernel Security.md",
+    "Shellcode Injection.md",
     "Task Lists.md",
+    "Kernel Security.md",
     "Assembly.md",
     "Dynamic Allocators.md",
     "Exploitation Scenarios.md",
-    "Shellcode Injection.md",
     "README.md",
     "Memory Errors.md",
     "images/Pasted image 20221228193811.png",
