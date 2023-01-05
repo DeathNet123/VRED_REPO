@@ -165,15 +165,15 @@
   },
   "active": "e16cf05a5a3ad3f1",
   "lastOpenFiles": [
+    "Vulnerability Research and Exploit Development.md",
+    "Kernel Security.md",
     "Shellcode Injection.md",
     "Task Lists.md",
-    "Kernel Security.md",
+    "Reverse Engineering.md",
+    "Exploitation Scenarios.md",
+    "Process in Linux.md",
     "Assembly.md",
     "Dynamic Allocators.md",
-    "Exploitation Scenarios.md",
-    "README.md",
-    "Memory Errors.md",
-    "images/Pasted image 20221228193811.png",
-    "Untitled.canvas"
+    "Memory Errors.md"
   ]
 }

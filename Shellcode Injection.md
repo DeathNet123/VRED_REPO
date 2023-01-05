@@ -400,6 +400,7 @@ Similarly, we can run cross-architecture shellcode with an emulator:
 
 ### Common Challenges
 
+<<<<<<< Updated upstream
   
 
 Well, that is very easy to write a normal shellcode that can simply run and make your defined task done. But that's not the end. The security researchers made our life difficult by adding different filters on data, more specifically on shellcode. That means we have to design our shellcode in such a way that it passes through the filters.
@@ -541,3 +542,8 @@ Now, computer architectures wised up and they started to add *memory protection*
 The x86 architecture has a *memory protection unit* (MPU) that prevents shellcode execution. The MPU is a hardware device that prevents shellcode execution by checking the memory access permissions. For example, if we try to execute a shellcode that is stored in a read-only memory page, the MPU will prevent the shellcode execution. Similarly, if we try to execute a shellcode that is stored in a non-executable memory page, the MPU will prevent the shellcode execution. So, we can't use shellcode in today's world. We can only get success if we got access to a writable as well as executabel memory page. Then we can execute our shellcode by jumping to the address of the injected shellcode.
 
 Well, there are a lot more filters that can be used to prevent your shellcode execution. But we can't discuss all of them here. So, I'll leave it to you to explore more about them.
+=======
+- **Forbidden Bytes**
+  Depending on the injection method, certain bytes might not be allowed. For example, if we are injecting shellcode into a binary, we might not be able to use null bytes. Similarly, if we are injecting shellcode into a URL, we might not be able to use certain characters like `&` or `=`. Although We can use a tool like `msfvenom` to generate shellcode that avoids these forbidden bytes, but we can also write our own shellcode that avoids these forbidden bytes. For example, we can write a shellcode that avoids null bytes using:
+
+>>>>>>> Stashed changes
