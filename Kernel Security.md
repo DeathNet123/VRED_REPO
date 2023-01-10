@@ -347,7 +347,7 @@ The virtual memory space of a process contains several different regions, includ
 -   Kernel code: In addition to the virtual memory space of a process, there is also an "upper half" of memory (above 0x8000000000000000 on 64-bit architectures) that is reserved for the kernel and is inaccessible to processes. This region of memory contains the code and data that is needed by the operating system to manage the system and provide services to processes. 
 
 We can see the virtual memory space of a process by looking at the /proc/self/maps file. This file contains a list of the different memory regions that are mapped into the virtual memory space of the process, along with information about the permissions, offsets, and other attributes of each region.
-
+For Details Read : [[Process in Linux]]
 ### Virtual Mapping
 
 Physical memory, also known as RAM (random access memory), is the main type of memory that is used by a computer to store data that is being actively used or processed. When a program is running, it is loaded into physical memory so that it can be accessed quickly by the processor.
@@ -499,6 +499,8 @@ These macros are typically implemented as simple address arithmetic operations, 
 ### Kernel Mitigations
 
 The Linux Kernel had 149 vulnerabilities (as tracked by CVEs) in 2021 alone so what does it means it means kernel will get hacked no matter what. So, what now ? Obviously we came up mitigation for the kernel as we did in userspace.
+Read [[Memory Errors]] for Understanding the Stack Canaries and ASLR.
+Read [[Dynamic Allocators]] for Understanding the Heap Vulnerabilities.
 
 The kernel has many mitigations. Some are familiar:
 
@@ -548,6 +550,7 @@ The syscall_entry function is a function in the kernel that is responsible for h
 If the syscall_entry function is called from kernel-space, it may lead to unexpected and potentially harmful behavior, as the function is not designed to be called in this way. This can cause chaos and disrupt the normal operation of the system.
 
 In summary, the syscall_entry function is a function in the kernel that is responsible for handling syscalls made by programs. It is designed to be called from user-space and should not be called from kernel-space, as this can lead to unexpected and potentially harmful behavior.
+For Details on Syscall 
 
 ## How to write the kernel ShellCode ?
 
@@ -556,8 +559,10 @@ Wakeup kid we are inside the kernelspace so we have kernel API. We have to use t
 The following actions can be taken within the kernel using kernel APIs and kernel objects to achieve certain goals:
 
 -   Privilege elevation: This can be achieved by calling the commit_creds function with the result of the prepare_kernel_cred function as an argument. For example: commit_creds(prepare_kernel_cred(0)). This action changes the credentials (such as the user and group IDs) of the current process, potentially allowing the process to gain additional privileges.
+  For Details about Linux Permission Module Read : [[Process in Linux]]
    
 -   Seccomp escape: This can be achieved by modifying the TIF_SECCOMP flag in the current task's thread_info structure. For example: current_task_struct->thread_info.flags &= ~(1 << TIF_SECCOMP). Seccomp is a security feature that allows programs to specify a filter that defines what system calls they are allowed to make. Disabling seccomp allows a program to make any system call, potentially bypassing restrictions that have been put in place.
+  For Details on SECCOMP read [[Sandboxing]]
 
 -   Command execution: This can be achieved by calling the run_cmd function and providing it with the path to the command that should be executed. For example: run_cmd("/path/to/my/command").    
 
@@ -569,6 +574,7 @@ To perform these actions, it is necessary to find the current_task_struct struct
   
 -   ASLR is usually enabled on real-world systems, so you will typically need to leak a kernel address and calculate the offset to find the locations of specific functions in memory.
 
+For Details about userspace ShellCode Visit [[Shellcode Injection]] and [[Assembly]]
 ### Calling kernel APIs
 
 Once you've found the APIs, you'll need to call them. Again, syscall is not the solution here! call is.

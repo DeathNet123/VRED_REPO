@@ -213,3 +213,6 @@ It is important to note that this method of bypassing ASLR is only effective if 
 >[!Note]
 >The Brute-Force technique works in netwrok based application and it can work in android since all the processes in android are spawned throug the single main process
 
+Further Reading : 
+- https://www.mdpi.com/2076-3417/12/13/6702
+- Read About [[Shellcode Injection]] to overwrite the return address after bypassing these mitigation techniques
