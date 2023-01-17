@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "f3b8de1a148b9dee",
+        "id": "1488e5521383aaa3",
         "type": "tabs",
         "children": [
           {
-            "id": "e16cf05a5a3ad3f1",
+            "id": "537d7d45a9852090",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Kernel Security.md",
+                "file": "Assembly.md",
                 "mode": "source",
                 "source": false
               }
@@ -86,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Kernel Security.md",
+                "file": "Assembly.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Kernel Security.md",
+                "file": "Assembly.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Kernel Security.md"
+                "file": "Assembly.md"
               }
             }
           },
@@ -163,17 +163,17 @@
       "obsidian-textgenerator-plugin:Text Generator: Templates Packages Manager": false
     }
   },
-  "active": "e16cf05a5a3ad3f1",
+  "active": "537d7d45a9852090",
   "lastOpenFiles": [
-    "Shellcode Injection.md",
+    "Dynamic Allocators.md",
+    "Exploitation Scenarios.md",
+    "Kernel Security.md",
     "Assembly.md",
     "Task Lists.md",
-    "README.md",
     "Memory Errors.md",
-    "Kernel Security.md",
-    "Exploitation Scenarios.md",
-    "Dynamic Allocators.md",
-    "images/Pasted image 20221228193811.png",
-    "Untitled.canvas"
+    "Process in Linux.md",
+    "README.md",
+    "Race Condtion.md",
+    "Reverse Engineering.md"
   ]
 }
