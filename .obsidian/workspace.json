@@ -166,14 +166,14 @@
   "active": "537d7d45a9852090",
   "lastOpenFiles": [
     "Dynamic Allocators.md",
+    "Vulnerability Research and Exploit Development.md",
+    "Assembly.md",
     "Exploitation Scenarios.md",
     "Kernel Security.md",
-    "Assembly.md",
     "Task Lists.md",
     "Memory Errors.md",
     "Process in Linux.md",
     "README.md",
-    "Race Condtion.md",
-    "Reverse Engineering.md"
+    "Race Condtion.md"
   ]
 }
