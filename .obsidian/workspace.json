@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Dynamic Allocators.md",
+                "file": "Vulnerability Research and Exploit Development.md",
                 "mode": "source",
                 "source": false
               }
@@ -86,7 +86,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Dynamic Allocators.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +102,6 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Dynamic Allocators.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -133,9 +131,7 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {
-                "file": "Dynamic Allocators.md"
-              }
+              "state": {}
             }
           }
         ],
@@ -158,17 +154,17 @@
       "obsidian-textgenerator-plugin:Text Generator: Templates Packages Manager": false
     }
   },
-  "active": "12b284f102932a58",
+  "active": "2a23ad03fc9565b5",
   "lastOpenFiles": [
+    "Kernel Rop.md",
+    "Vulnerability Research and Exploit Development.md",
+    "Reverse Engineering.md",
+    "Process in Linux.md",
+    "Dynamic Allocators.md",
     "Capture0.png.md",
     "Assembly.md",
     "images/Capture2.PNG",
     "images/Capture1.PNG",
-    "Capture2.PNG.md",
-    "Capture1.PNG.md",
-    "Kernel Security.md",
-    "Memory Errors.md",
-    "Process in Linux.md",
-    "Shellcode Injection.md"
+    "Capture2.PNG.md"
   ]
 }
