@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Vulnerability Research and Exploit Development.md",
+                "file": "Task Lists.md",
                 "mode": "source",
                 "source": false
               }
@@ -86,6 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "Task Lists.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,6 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "Task Lists.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -131,7 +133,9 @@
             "type": "leaf",
             "state": {
               "type": "outline",
-              "state": {}
+              "state": {
+                "file": "Task Lists.md"
+              }
             }
           }
         ],
@@ -154,13 +158,13 @@
       "obsidian-textgenerator-plugin:Text Generator: Templates Packages Manager": false
     }
   },
-  "active": "2a23ad03fc9565b5",
+  "active": "12b284f102932a58",
   "lastOpenFiles": [
-    "Kernel Rop.md",
+    "Dynamic Allocators.md",
     "Vulnerability Research and Exploit Development.md",
+    "Kernel Rop.md",
     "Reverse Engineering.md",
     "Process in Linux.md",
-    "Dynamic Allocators.md",
     "Capture0.png.md",
     "Assembly.md",
     "images/Capture2.PNG",
