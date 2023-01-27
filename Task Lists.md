@@ -8,3 +8,4 @@
 - [x] Kernel Security  => Arslan Ahmed
 - [ ] Exploitation Scenarios => Ali Raza
 - [x] Dynamic Allocator Misuse => Arslan Ahmed 
+- [ ] Explore the How2Heap in more Details

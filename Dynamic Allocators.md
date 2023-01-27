@@ -205,3 +205,6 @@ The statement also mentions that this technique can be used to overwrite a point
 The technique can be done with or without tcache, which means that it can work in the case of thread-local caching and also in the case where thread-local caching is disabled.
 
 It's important to note that this technique requires the attacker to have a way to control the data passed to the free() function, and also that this technique is not a vulnerability itself, but a technique to exploit vulnerabilities, such as memory corruption vulnerabilities.
+
+Further Reading:
+[how2heap](https://github.com/shellphish/how2heap) => it is a repo maintained by Yan and his defcon team
