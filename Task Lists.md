@@ -1,5 +1,5 @@
 - [ ] Process in Linux => Arslan Ahmed
-- [ ] x86_64 Assembly => Tehreem Iqbal
+- [x] x86_64 Assembly => Tehreem Iqbal
 - [x] ShellCoding => Ali Raza
 - [ ] Sandboxing => Tehreem Iqbal
 - [ ] Revere Engineerig => Faran Abdullah

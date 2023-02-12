@@ -3,5 +3,6 @@
   "cssTheme": "Obsidianite",
   "theme": "system",
   "translucency": true,
-  "nativeMenus": false
+  "nativeMenus": false,
+  "baseFontSize": 15
 }

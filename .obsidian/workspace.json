@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Assembly.md",
+                "file": "Exploitation Scenarios.md",
                 "mode": "source",
                 "source": false
               }
@@ -86,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Assembly.md",
+                "file": "Exploitation Scenarios.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Assembly.md",
+                "file": "Exploitation Scenarios.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Assembly.md"
+                "file": "Exploitation Scenarios.md"
               }
             }
           },
@@ -165,15 +165,15 @@
   },
   "active": "537d7d45a9852090",
   "lastOpenFiles": [
-    "Dynamic Allocators.md",
-    "Vulnerability Research and Exploit Development.md",
-    "Assembly.md",
-    "Exploitation Scenarios.md",
-    "Kernel Security.md",
-    "Task Lists.md",
-    "Memory Errors.md",
+    "Capture2.PNG.md",
     "Process in Linux.md",
-    "README.md",
+    "Kernel Security.md",
+    "Memory Errors.md",
+    "Exploitation Scenarios.md",
+    "Dynamic Allocators.md",
+    "Assembly.md",
+    "Shellcode Injection.md",
+    "Sandboxing.md",
     "Race Condtion.md"
   ]
 }
