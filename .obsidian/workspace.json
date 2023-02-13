@@ -189,6 +189,7 @@
   "active": "b3cd5cb834a10f8a",
   "lastOpenFiles": [
 <<<<<<< HEAD
+<<<<<<< HEAD
     "Capture2.PNG.md",
     "Process in Linux.md",
     "Kernel Security.md",
@@ -201,15 +202,23 @@
     "Race Condtion.md"
 =======
     "Kernel Security.md",
+=======
+    "Memory Errors.md",
+>>>>>>> 3b60204 (fixed the issues in KPTI)
     "KPTI.md",
+    "Kernel Security.md",
     "Process in Linux.md",
     "images/Pasted image 20230127232144.png",
     "images/Pasted image 20230127232040.png",
     "Pasted image 20230127232004.png",
     "Kernel Rop.md",
     "Dynamic Allocators.md",
+<<<<<<< HEAD
     "Race Condtion.md",
     "Task Lists.md"
 >>>>>>> 76fd9a10357f5857b63f1115f2a6ce5a081f34af
+=======
+    "Race Condtion.md"
+>>>>>>> 3b60204 (fixed the issues in KPTI)
   ]
 }

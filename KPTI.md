@@ -21,7 +21,7 @@ In KPTI, there are two sets of page tables, one for user-mode and one for kernel
 
 In the Intel processor, the MMU (Memory Management Unit) uses a register called CR3 (Control Register 3) to store the physical address of the page directory. When a process switches between user and kernel mode, the Linux kernel updates the value of the CR3 register to point to the appropriate page directory for the current mode.
 
-In Linux kernel, the page directory for each process is stored in a data structure called `mm_struct`. The `mm_struct` data structure contains a field called `pgd` that stores the virtual address of the page directory for the process.
+In Linux kernel, the page directory for each process is stored in a data structure called `mm_struct`. The `mm_struct` data structure contains a field called `pgd` that stores the physical address of the page directory for the process.
 
 >[!Note]
 >`task_struct` contains `mm_struct` so order is `task_struct->mm_struct->pgd`
