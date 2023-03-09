@@ -744,3 +744,15 @@ Disassembly of section .text.unlikely:
   6c:   c3                      ret    
 ```
 
+### task_struct
+
+Questions related to task_struct.
+
+**What is difference between the active_mm and mm in task_struct?**
+In the context of the Linux kernel, `mm` and `active_mm` are two fields within the `task_struct` data structure that represent a process's memory management information.
+
+`mm` stands for "memory management," and it points to the process's main memory descriptor structure. This data structure holds information about the process's virtual address space, including the locations of code, data, and stack segments, as well as other metadata like page tables, memory protection settings, and memory mappings.
+
+`active_mm`, on the other hand, is a pointer to the memory descriptor structure that represents the process's currently active memory mappings. This is particularly relevant in the case of multi-threaded processes, where each thread has its own `mm` structure, but they all share the same `active_mm`. When a thread switches between different memory mappings (for example, when it context-switches to a different task), the `active_mm` field is updated to reflect the new mapping.
+
+In summary, `mm` is a pointer to the main memory descriptor structure for a process, while `active_mm` is a pointer to the memory descriptor structure that currently represents the process's active memory mappings.
