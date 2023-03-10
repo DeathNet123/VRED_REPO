@@ -21,14 +21,24 @@ In KPTI, there are two sets of page tables, one for user-mode and one for kernel
 
 In the Intel processor, the MMU (Memory Management Unit) uses a register called CR3 (Control Register 3) to store the physical address of the page directory. When a process switches between user and kernel mode, the Linux kernel updates the value of the CR3 register to point to the appropriate page directory for the current mode.
 
-In Linux kernel, the page directory for each process is stored in a data structure called `mm_struct`. The `mm_struct` data structure contains a field called `pgd` that stores the physical address of the page directory for the process.
+In Linux kernel, the page directory for each process is stored in a data structure called `mm_struct`. The `mm_struct` data structure contains a field called  `__randomize_layout` which contains the `pgd_t pgd;`  which is a unsigned long variable that stores the physical address of the page directory for the process.
+```C
+struct mm_struct {
+	struct {
+		// Some other types
+		pgd_t * pgd;
+		// Some other types
+	} __randomize_layout;
+	// Some Other types
+};
+```
 
 >[!Note]
->`task_struct` contains `mm_struct` so order is `task_struct->mm_struct->pgd`
+>`task_struct` contains `mm_struct` so order is `task_struct->mm_struct->__randomize_layout->pgd`
 
 
 When a process switches from user mode to kernel mode, the Linux kernel saves the current value of the CR3 register in a temporary variable, then it updates the value of the CR3 register with the physical address of the kernel page directory this can be done easily since both tables are placed next to each other in memory.
 
-On the other hand, when a process switches from kernel mode to user mode, the Linux kernel restores the value of the CR3 register with the physical address of the page directory for the current process, which is stored in the `pgd` field of the `mm_struct` data structure associated with the process.
+On the other hand, when a process switches from kernel mode to user mode, the Linux kernel restores the value of the CR3 register with the physical address of the page directory for the current process, which is stored in the `mm_struct` data structure associated with the process.
 
 Further Reading : [Page Table Management (kernel.org)](https://www.kernel.org/doc/gorman/html/understand/understand006.html)
