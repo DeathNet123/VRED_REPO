@@ -29,3 +29,8 @@ look closely we are saving the current `rsp` into `rdi` and then moving some val
 The answer to this question lies in man page of signal do `man 7 signal` and read the section called `Execution of signal handlers`
 
 **What the hell is swapgs_restore_regs_and_return_to_usermode exactly ?**
+
+Many authors of the write-up call this gadget function and confusingly when we try to audit it from linux kernel code we will not find this symbol because it's just label defined in the code perhaps it is for readability and code management so we can know what the following code is doing...
+
+https://elixir.bootlin.com/linux/v5.16.10/source/arch/x86/entry/entry_64.S#L569 here is the link to read code i didn't like at&t syntax... but you are welcome to read.
+
