@@ -9,16 +9,16 @@ Kernel Rop is CTF challenge available at [hexCtf2020](https://2020.ctf.link/). T
 While practicing the second part we were jumping to swapgs_restore_regs_and_return_to_usermode + 22 and there were so many push and pops i was confused how ROP chain made by lkmidas was working
 
 ```asm
-.text:FFFFFFFF81200F26                 mov     rdi, rsp
-.text:FFFFFFFF81200F29                 mov     rsp, qword ptr gs:unk_6004
-.text:FFFFFFFF81200F32                 push    qword ptr [rdi+30h]
-.text:FFFFFFFF81200F35                 push    qword ptr [rdi+28h]
-.text:FFFFFFFF81200F38                 push    qword ptr [rdi+20h]
-.text:FFFFFFFF81200F3B                 push    qword ptr [rdi+18h]
-.text:FFFFFFFF81200F3E                 push    qword ptr [rdi+10h]
-.text:FFFFFFFF81200F41                 push    qword ptr [rdi]
-.text:FFFFFFFF81200F43                 push    rax
-.text:FFFFFFFF81200F44                 jmp     short loc_FFFFFFFF81200F89
+.text:FFFFFFFF81200F26            mov     rdi, rsp
+.text:FFFFFFFF81200F29            mov     rsp, qword ptr gs:unk_6004
+.text:FFFFFFFF81200F32            push    qword ptr [rdi+30h] // SS 
+.text:FFFFFFFF81200F35            push    qword ptr [rdi+28h] // RSP
+.text:FFFFFFFF81200F38            push    qword ptr [rdi+20h] // EFLAGS
+.text:FFFFFFFF81200F3B            push    qword ptr [rdi+18h] // CS 
+.text:FFFFFFFF81200F3E            push    qword ptr [rdi+10h] // RIP
+.text:FFFFFFFF81200F41            push    qword ptr [rdi]     // garbage
+.text:FFFFFFFF81200F43            push    rax // garbage
+.text:FFFFFFFF81200F44            jmp     short loc_FFFFFFFF81200F89
 ```
 
 look closely we are saving the current `rsp` into `rdi` and then moving some value into `rsp` i don't know yet what it is then using `rdi` we are building the frame on stack again requried by `iretq` 
