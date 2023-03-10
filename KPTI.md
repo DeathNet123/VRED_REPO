@@ -36,6 +36,8 @@ struct mm_struct {
 >[!Note]
 >`task_struct` contains `mm_struct` so order is `task_struct->mm_struct->__randomize_layout->pgd`
 
+>[!info]
+>In Older version of linux, when ASLR was not introduce, the `pgd` data structure was directly under `mm_struct`. There was not `__randomize_layout` field at that time.
 
 When a process switches from user mode to kernel mode, the Linux kernel saves the current value of the CR3 register in a temporary variable, then it updates the value of the CR3 register with the physical address of the kernel page directory this can be done easily since both tables are placed next to each other in memory.
 
