@@ -34,3 +34,6 @@ Many authors of the write-up call this gadget function and confusingly when we t
 
 https://elixir.bootlin.com/linux/v5.16.10/source/arch/x86/entry/entry_64.S#L569 here is the link to read code i didn't like at&t syntax... but you are welcome to read.
 
+**How does the value of rax remains intact when we returns to userland after reading the offset value of ksymtab_commit_creds ?**
+I am not sure but probably it is because the return value of syscalls are stored in rax so in this whole process of switching from the kernel_mode to userland the value of rax remains intact since it is return value of that sycall...
+my assumption can be supported by the fact that we have `push rax` in kpti trampoline code before there is `pop rax` but for some reason cannot trace it back properly it gets crashed but i am somewhat satisfied this might be the reason
