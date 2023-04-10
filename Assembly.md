@@ -39,7 +39,7 @@ Conditional jumps: je, jne, jge, jle
 ### System calls
 System calls (on amd64) are triggered by:
 -  Set rax to the system call number
--  Store arguments in rdi, rsi, rdx, rcx, r8, r9
+-  Store arguments in rdi, rsi, rdx, r10, r8, r9
 -  Call the `syscall` instruction
 The following assembly code that uses the `read` system call to read from the standard input (file descriptor 0) into a buffer in memory.
 
@@ -54,7 +54,7 @@ syscall             # Make the system call
 ```
 
 ### Function calling conventions
-In x86_64 architecture, arguments are passed on stack in reverse order and remaining arguments are passed via register rsi, rdi, rdx, rcx, r8 and r9 and the return value of function is stored in rax register.
+In x86_64 architecture, arguments are passed via register rsi, rdi, rdx, rcx, r8 and r9 and the return value of function is stored in rax register. If we have more then six arguments for the function then they are pushed on the stack in reverse order which means doing (rbp + someIntValue) will be the 7th argument and so on.
 **Registers are shared between functions, so calling conventions should agree on what registers are protected.**
 - Caller-saved (Callee owned) registers are those that are expected to be modified by the called function, and it is the responsibility of the calling function (if the caller wants to preserve them) to push them before making the function call and later pop them after the function returns. The caller-saved registers in the x86-64 architecture are: `rax`,`rcx`, `rdx`, `rdi`,  `rsi`,`r8`to `r11`
 
