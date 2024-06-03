@@ -188,7 +188,7 @@ The "filp" parameter is a pointer to a "struct file" object that represents the 
 From user space, a program can use the read() and write() system calls to access and manipulate the file exposed by the module. For example:
 
 ```c
-fd = open("/dev/arslan_mod", 0) read(fd, buffer, 128);
+fd = open("/dev/pufcit", 0) read(fd, buffer, 128);
 ```
 
 This code would open the file **"/dev/pufcit"** in read-only mode, and then use the read() system call to read up to 128 bytes of data into the "buffer" memory location.
@@ -293,7 +293,7 @@ struct cred {
 };
 ```
 
- The `commit_creds` structure is typically considered to be immutable, which means that it should not be modified in place. Instead, when the credentials of a process need to be changed, the kernel provides a pair of functions called `commit_creds` and `prepare_kernel_cred` that can be used to replace the existing credentials with new ones.
+ The `struct cred` structure is typically considered to be immutable, which means that it should not be modified in place. Instead, when the credentials of a process need to be changed, the kernel provides a pair of functions called `commit_creds` and `prepare_kernel_cred` that can be used to replace the existing credentials with new ones.
 
 The `commit_creds` function is used to commit a new set of credentials to a process. It takes a pointer to a `struct cred` structure as an argument, and updates the credentials of the current process to match the ones specified in the structure.
 
